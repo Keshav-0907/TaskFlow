@@ -21,7 +21,7 @@ const AccessAnywhere = () => {
         <path
           d="M0.333496 70.413H6.29606H11.5959H11.809H16.4747H48.4266H56.0299H76.3335"
           stroke="#090814"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           stroke-miterlimit="10"
         />
         <path
@@ -91,19 +91,19 @@ const AccessAnywhere = () => {
         <path
           d="M20.009 17.0541H28.2092"
           stroke="#090814"
-          stroke-width="2"
+          strokeWidth="2"
           stroke-miterlimit="10"
         />
         <path
           d="M20.009 20.043H37.2586"
           stroke="#090814"
-          stroke-width="2"
+          strokeWidth="2"
           stroke-miterlimit="10"
         />
         <path
           d="M20.009 18.698H44.7179"
           stroke="#090814"
-          stroke-width="2"
+          strokeWidth="2"
           stroke-miterlimit="10"
         />
         <path
@@ -113,19 +113,19 @@ const AccessAnywhere = () => {
         <path
           d="M20.009 25.9025H28.2092"
           stroke="#090814"
-          stroke-width="2"
+          strokeWidth="2"
           stroke-miterlimit="10"
         />
         <path
           d="M20.009 28.8914H37.2586"
           stroke="#090814"
-          stroke-width="2"
+          strokeWidth="2"
           stroke-miterlimit="10"
         />
         <path
           d="M20.009 27.5464H44.7179"
           stroke="#090814"
-          stroke-width="2"
+          strokeWidth="2"
           stroke-miterlimit="10"
         />
         <path
@@ -135,19 +135,19 @@ const AccessAnywhere = () => {
         <path
           d="M20.009 34.7509H28.2092"
           stroke="#090814"
-          stroke-width="2"
+          strokeWidth="2"
           stroke-miterlimit="10"
         />
         <path
           d="M20.009 37.7396H37.2586"
           stroke="#090814"
-          stroke-width="2"
+          strokeWidth="2"
           stroke-miterlimit="10"
         />
         <path
           d="M20.009 36.3947H44.7179"
           stroke="#090814"
-          stroke-width="2"
+          strokeWidth="2"
           stroke-miterlimit="10"
         />
         <path

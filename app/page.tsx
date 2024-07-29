@@ -1,18 +1,20 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import useAuth from "@/hooks/useAuth";
 
 export default function Home() {
+  const { user } = useAuth();
   const router = useRouter();
-  const user = true;
+  const isUser = user
 
   useEffect(() => {
-    if (user) {
+    if (isUser?.name) {
       router.push("/dashboard");
     } else {
       router.push("/login");
     }
-  }, [user, router]);
+  }, []);
 
   return <div>Hello</div>;
 }

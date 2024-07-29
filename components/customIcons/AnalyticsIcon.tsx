@@ -12,14 +12,14 @@ const AnalyticsIcon = () => {
       <path
         d="M20 20H4V4"
         stroke="#797979"
-        stroke-width="1.5"
+        strokeWidth="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M4 16.5L12 9L15 12L19.5 7.5"
         stroke="#797979"
-        stroke-width="1.5"
+        strokeWidth="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
