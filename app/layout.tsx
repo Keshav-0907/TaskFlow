@@ -3,6 +3,8 @@ import { Barlow } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from '@vercel/analytics/react';
+
 
 const inter = Barlow({ subsets: ["latin"], weight: ["400"] });
 
@@ -20,6 +22,7 @@ export default function RootLayout({
     <AuthProvider>
       <html lang="en">
         <body className={inter.className}>
+        <Analytics />
           <Toaster />
           {children}
         </body>
