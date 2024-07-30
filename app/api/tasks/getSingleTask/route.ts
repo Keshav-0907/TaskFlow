@@ -16,7 +16,6 @@ export async function POST(req: NextRequest) {
     await connectToDb();
 
     const task = await TaskModel.findById(taskId);
-    console.log(task)
 
     if (!task) {
       return NextResponse.json({

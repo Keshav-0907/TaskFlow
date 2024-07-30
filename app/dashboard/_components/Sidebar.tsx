@@ -44,28 +44,37 @@ const SideBarItems = [
   },
 ];
 
+interface sidebarProps {
+  setOpenTaskModal: (open: boolean) => void;
+  openTaskModal: boolean;
+  setTaskStatus: (status: string) => void;
+  setIsSidebarOpen: (open: boolean) => void;
+  isSidebarOpen: boolean;
+}
+
 const Sidebar = ({
   setOpenTaskModal,
   openTaskModal,
   setTaskStatus,
   setIsSidebarOpen,
   isSidebarOpen,
-}) => {
+}: sidebarProps) => {
   const { user, logout } = useAuth();
   const [activeItem, setActiveItem] = useState("home");
 
   const handleItemClick = (value: React.SetStateAction<string>) => {
     setActiveItem(value);
   };
-  
-  const handleLogout = () =>{
-    toast.success('Logged Out')
-    logout();
 
-  }
+  const handleLogout = () => {
+    toast.success("Logged Out");
+    logout();
+  };
 
   return (
-    <div className={`w-[285px] pt-6 px-4 pb-8 border-e-[1px] border-[#DEDEDE] h-screen flex flex-col justify-between bg-[#FFF]`}>
+    <div
+      className={`w-[285px] pt-6 px-4 pb-8 border-e-[1px] border-[#DEDEDE] h-screen flex flex-col justify-between bg-[#FFF]`}
+    >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <div className="flex gap-2 items-center">
@@ -74,7 +83,7 @@ const Sidebar = ({
               src="https://github.com/shadcn.png"
               alt="User"
             />
-            <div className="text-xl font-medium">{user.name}</div>
+            <div className="text-xl font-medium">{user?.name}</div>
           </div>
           <div className="flex justify-between items-center">
             <div className="flex gap-5">
@@ -82,10 +91,13 @@ const Sidebar = ({
                 strokeWidth={1.5}
                 className="text-[#666666] cursor-pointer"
               />
-              <Loader
-                strokeWidth={1.5}
-                className="text-[#666666] cursor-pointer"
-              />
+              <div className="relative">
+                <div className="w-2 h-2 bg-yellow-400 absolute rounded-full right-0"></div>
+                <Loader
+                  strokeWidth={1.5}
+                  className="text-[#666666] cursor-pointer"
+                />
+              </div>
               <ChevronsRight
                 strokeWidth={1.5}
                 className="text-[#666666] cursor-pointer"
@@ -93,7 +105,7 @@ const Sidebar = ({
             </div>
             <button
               onClick={handleLogout}
-              className="p-2 bg-[#F4F4F4] rounded-[4px] text-[#797979]"
+              className="p-2 bg-[#F4F4F4] rounded-[4px] text-[#797979] hover:bg-red-500 hover:text-white"
             >
               Logout
             </button>

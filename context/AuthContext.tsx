@@ -1,51 +1,63 @@
 "use client";
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import axios from "axios";
-// import jwt_decode from "jwt-decode";
+import toast from "react-hot-toast";
+
+interface User {
+  _id: string;
+  email: string;
+  name: string;
+}
 
 interface AuthContextProps {
-  user: any;
+  user: User | null;
   isLoading: boolean;
-  login: (data: { email: string; password: string }) => void;
+  login: (data: { email: string; password: string }) => Promise<void>;
   logout: () => void;
+}
+
+interface AuthProviderProps {
+  children: ReactNode;
 }
 
 const AuthContext = createContext<AuthContextProps>({
   user: null,
   isLoading: false,
-  login: () => {},
+  login: async () => {},
   logout: () => {},
 });
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
 
   useEffect(() => {
     const token = Cookies.get("token");
+    
     const getUser = async () => {
       if (token) {
         setIsLoading(true);
         try {
-          const response = await axios.post("/api/user/getUser", {
-            token: token,
-          });
+          const response = await axios.post("/api/user/getUser", { token });
+          console.log("User data:", response.data);
           setUser(response.data.userDetails);
         } catch (error) {
           console.error("Failed to fetch user:", error);
         } finally {
           setIsLoading(false);
         }
+      } else {
+        setIsLoading(false);
       }
     };
 
     getUser();
   }, []);
 
-  const login = async ({ email, password }) => {
+  const login = async ({ email, password }: { email: string; password: string }) => {
     setIsLoading(true);
     try {
       const response = await fetch("/api/user/loginuser", {
@@ -55,19 +67,13 @@ export const AuthProvider = ({ children }) => {
         },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await response.json();
-      console.log("data", data);
-      if (response.ok) {
-        console.log(response)
+      console.log('Login response:', data);
+      if (data.status === 200) {
         Cookies.set("token", data.token, { expires: 1 });
-        console.log('here2')
-        // const decodedToken = jwt_decode(data.token);
-        // setUser(decodedToken);
-        router.push("/dashboard");
-        return data;
+        window.location.href = '/dashboard'
       } else {
-        alert(data.msg);
+        toast.error(data.msg);
       }
     } catch (error) {
       console.error("Login failed:", error);

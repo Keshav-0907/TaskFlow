@@ -3,14 +3,7 @@ import { connectToDb } from "@/utils/connectToDb";
 import TaskModel from "@/models/TaskModel";
 
 export async function PUT(req: NextRequest) {
-  const { taskId, title, priority, deadline, description, status, updatedBy } = await req.json();
-
-  if (!taskId || !title || !status) {
-    return NextResponse.json({
-      msg: "Please fill in all required fields",
-      status: 400,
-    });
-  }
+  const { taskId, title, priority, deadline, description, updatedBy } = await req.json();
 
   await connectToDb();
 
@@ -26,7 +19,6 @@ export async function PUT(req: NextRequest) {
   task.priority = priority;
   task.deadline = deadline;
   task.description = description;
-  task.status = status;
   task.updatedBy = updatedBy;
 
   await task.save();

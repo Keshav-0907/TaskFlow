@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     );
   }
 //FIX
-  const token = jwt.sign({ id: isUser._id }, 'keshav', {
+  const token = jwt.sign({ id: isUser._id }, `${process.env.NEXT_PUBLIC_JWT_SECRET}`, {
     expiresIn: "1h",
   });
 

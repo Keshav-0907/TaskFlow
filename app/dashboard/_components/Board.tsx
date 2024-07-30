@@ -1,58 +1,97 @@
-'use client';
-import React, { useEffect, useState, useCallback } from 'react';
-import { ListFilter, Plus } from 'lucide-react';
-import { useDrag, useDrop } from 'react-dnd';
-import TaskCard from '@/components/TaskCard';
-import useAuth from '@/hooks/useAuth';
+"use client";
+import React, { useEffect, useState, useCallback } from "react";
+import { ListFilter, Plus } from "lucide-react";
+import { useDrop } from "react-dnd";
+import TaskCard from "@/components/TaskCard";
+import useAuth from "@/hooks/useAuth";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import NoTasks from "@/components/customIcons/NoTasks";
 
-const Board = ({ setOpenTaskModal, setTaskStatus, openTaskModal }) => {
-  const [userTasks, setUserTasks] = useState([]);
+interface Task {
+  _id: string;
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  deadline: string;
+}
+
+interface BoardProps {
+  setOpenTaskModal: (open: boolean) => void;
+  setTaskStatus: (status: string) => void;
+  openTaskModal: boolean;
+}
+
+interface ColumnProps {
+  title: string;
+  tasks: Task[];
+  status: string;
+}
+
+interface DropItem {
+  id: string;
+}
+
+const Board: React.FC<BoardProps> = ({
+  setOpenTaskModal,
+  setTaskStatus,
+  openTaskModal,
+}) => {
+  const [userTasks, setUserTasks] = useState<Task[]>([]);
   const { user } = useAuth();
-  const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
   useEffect(() => {
     const getTask = async () => {
-      const res = await fetch('/api/tasks/getUserTask', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userID: user?._id,
-        }),
-      });
-      const data = await res.json();
-      setUserTasks(data || []);
+      if (!user?._id) return;
+      try {
+        const res = await fetch("/api/tasks/getUserTask", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userID: user._id }),
+        });
+        const data = await res.json();
+        setUserTasks(data || []);
+      } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+      }
     };
     getTask();
   }, [selectedTaskId, user?._id, openTaskModal]);
 
-  const handleTaskDrop = useCallback((taskId, status) => {
+  const handleTaskDrop = useCallback((taskId: string, status: string) => {
     setUserTasks((prevTasks) => {
       const updatedTasks = prevTasks.map((task) =>
         task._id === taskId ? { ...task, status } : task
       );
-      fetch('/api/tasks/updateTaskStatus', {
-        method: 'PUT',
+      fetch("/api/tasks/updateTaskStatus", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ taskId, status }),
-      });
+      }).catch((error) =>
+        console.error("Failed to update task status:", error)
+      );
       return updatedTasks;
     });
   }, []);
 
-  const todoTasks = userTasks.filter((task) => task.status === 'todo');
-  const inProgressTasks = userTasks.filter((task) => task.status === 'inProgress');
-  const underReviewTasks = userTasks.filter((task) => task.status === 'underReview');
-  const finishedTasks = userTasks.filter((task) => task.status === 'finished');
+  const todoTasks = userTasks.filter((task) => task.status === "todo");
+  const inProgressTasks = userTasks.filter(
+    (task) => task.status === "inProgress"
+  );
+  const underReviewTasks = userTasks.filter(
+    (task) => task.status === "underReview"
+  );
+  const finishedTasks = userTasks.filter((task) => task.status === "finished");
 
-  const Column = ({ title, tasks, status }) => {
-    const [{ isOver }, drop] = useDrop({
-      accept: 'TASK',
+  const Column: React.FC<ColumnProps> = ({ title, tasks, status }) => {
+    const [{ isOver }, drop] = useDrop<DropItem, void, { isOver: boolean }>({
+      accept: "TASK",
       drop: (item) => handleTaskDrop(item.id, status),
       collect: (monitor) => ({
         isOver: monitor.isOver(),
@@ -61,24 +100,33 @@ const Board = ({ setOpenTaskModal, setTaskStatus, openTaskModal }) => {
 
     return (
       <div
-        ref={drop}
-        className={`text-[#555555] flex flex-col gap-4 ${isOver ? 'bg-gray-100' : ''}`}
+        ref={drop as any}
+        className={`text-[#555555] flex flex-col gap-4 ${
+          isOver ? "bg-gray-100" : ""
+        }`}
       >
-        <div className="flex justify-between">
-          {title}
+        <div className="flex justify-between items-center">
+          <span>{title}</span>
           <ListFilter />
         </div>
-        {tasks.map((task, index) => (
-          <TaskCard
-            key={task._id}
-            task={task}
-            index={index}
-            onClick={setSelectedTaskId}
-            setSelectedTaskId={setSelectedTaskId}
-            selectedTaskId={selectedTaskId}
-
-          />
-        ))}
+        <div className="flex flex-col gap-3">
+          {tasks.length > 0 ? (
+            tasks.map((task) => (
+              <TaskCard
+                key={task._id}
+                task={task as any}
+                onClick={() => setSelectedTaskId(task._id)}
+                selectedTaskId={selectedTaskId as any}
+                index={undefined as any}
+                setSelectedTaskId={undefined as any}
+              />
+            ))
+          ) : (
+            <div className="flex justify-center text-gray-600">
+              No tasks available.
+            </div>
+          )}
+        </div>
         <button
           onClick={() => {
             setTaskStatus(status);
@@ -94,12 +142,20 @@ const Board = ({ setOpenTaskModal, setTaskStatus, openTaskModal }) => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-    <div className="grid grid-cols-4 bg-white p-4 h-full gap-4">
-      <Column title="To do" tasks={todoTasks} status="todo" />
-      <Column title="In progress" tasks={inProgressTasks} status="inProgress" />
-      <Column title="Under review" tasks={underReviewTasks} status="underReview" />
-      <Column title="Finished" tasks={finishedTasks} status="finished" />
-    </div>
+      <div className="grid grid-cols-4 bg-white p-4 h-full gap-4">
+        <Column title="To do" tasks={todoTasks} status="todo" />
+        <Column
+          title="In progress"
+          tasks={inProgressTasks}
+          status="inProgress"
+        />
+        <Column
+          title="Under review"
+          tasks={underReviewTasks}
+          status="underReview"
+        />
+        <Column title="Finished" tasks={finishedTasks} status="finished" />
+      </div>
     </DndProvider>
   );
 };

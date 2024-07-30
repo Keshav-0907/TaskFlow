@@ -1,14 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "./_components/Sidebar";
 import Greetings from "./_components/Greetings";
 import Features from "./_components/Features";
 import MenuBar from "./_components/MenuBar";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import TaskModal from "@/components/TaskModal";
 import Board from "./_components/Board";
+import Loader from "@/components/Loader";
 
 const Dashboard = () => {
   const { user, isLoading } = useAuth();
@@ -18,9 +18,6 @@ const Dashboard = () => {
 
   const router = useRouter();
 
-  // console.log(isLoading);
-  // console.log("OTM", openTaskModal);
-
   useEffect(() => {
     if (!isLoading && !user) {
       router.push("/login");
@@ -28,12 +25,21 @@ const Dashboard = () => {
   }, [isLoading, user, router]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
-  if (!user) {
-    return null; // or some fallback UI
-  }
+  const getGreeting = () => {
+    const currentHour = new Date().getHours();
+    if (currentHour < 12) {
+      return "Good Morning";
+    } else if (currentHour < 18) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
+    }
+  };
+  const greetingMessage = getGreeting();
+
   return (
     <div className="flex w-screen">
       <div className="fixed">
@@ -43,11 +49,10 @@ const Dashboard = () => {
           setTaskStatus={setTaskStatus}
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
-          // taskStatus={taskStatus}
         />
       </div>
       <div className="py-6 pl-[300px] pr-4 flex overflow-y-auto flex-col gap-4 h-screen w-full bg-[#F7F7F7]">
-        <Greetings />
+        <Greetings greetingMessage={greetingMessage} />
         <Features />
         <MenuBar setOpenTaskModal={setOpenTaskModal} />
         <Board
@@ -68,7 +73,7 @@ const Dashboard = () => {
           openTaskModal={openTaskModal}
           setTaskStatus={setTaskStatus}
           taskStatus={taskStatus}
-          mode='add'
+          mode="add"
         />
       </div>
     </div>
