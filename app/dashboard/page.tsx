@@ -46,7 +46,7 @@ const Dashboard = () => {
           // taskStatus={taskStatus}
         />
       </div>
-      <div className="py-6 pl-[300px] pr-4 flex overflow-y-auto flex-col gap-4 w-full bg-[#F7F7F7]">
+      <div className="py-6 pl-[300px] pr-4 flex overflow-y-auto flex-col gap-4 h-screen w-full bg-[#F7F7F7]">
         <Greetings />
         <Features />
         <MenuBar setOpenTaskModal={setOpenTaskModal} />

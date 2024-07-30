@@ -65,7 +65,7 @@ const Sidebar = ({
   }
 
   return (
-    <div className={`w-[285px] pt-6 px-4 pb-8 border-e-[1px] border-[#DEDEDE] h-screen flex flex-col justify-between`}>
+    <div className={`w-[285px] pt-6 px-4 pb-8 border-e-[1px] border-[#DEDEDE] h-screen flex flex-col justify-between bg-[#FFF]`}>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <div className="flex gap-2 items-center">

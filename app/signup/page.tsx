@@ -18,16 +18,20 @@ const Signup = () => {
       toast.error("All fields are required");
       return;
     }
-  
+
     try {
       const res = await axios.post("/api/user/createuser", {
         name,
         email,
         password,
       });
-  
+
       console.log(res.data.status);
-  
+      toast.success("SignUp Successful");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
+
       if (res.data.status === 400) {
         setShowError(true);
       }
@@ -36,7 +40,7 @@ const Signup = () => {
       console.error("Error creating user:", error);
     }
   };
-  
+
   return (
     <div className="bg-gradient-to-b from-white to-[#AFA3FF] h-screen flex justify-center items-center">
       <div className="p-[60px] bg-white rounded-2xl border-[1px] border-[#CECECE] flex flex-col gap-8">
