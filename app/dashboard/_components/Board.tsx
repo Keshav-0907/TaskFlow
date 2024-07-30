@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { ListFilter, Plus } from "lucide-react";
 import TaskCard from "@/components/TaskCard";
 import useAuth from "@/hooks/useAuth";
-import TaskModal from "@/components/TaskModal";
 
-const Board = ({ setOpenTaskModal, setTaskStatus }) => {
+const Board = ({ setOpenTaskModal, setTaskStatus, openTaskModal }) => {
   const [userTasks, setUserTasks] = useState([]);
-  const [openTaskModal, setTaskModal] = useState(false);
-
   const { user } = useAuth();
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
+
+  console.log('ss', selectedTaskId)
 
   useEffect(() => {
     const getTask = async () => {
@@ -22,10 +22,10 @@ const Board = ({ setOpenTaskModal, setTaskStatus }) => {
         }),
       });
       const data = await res.json();
-      setUserTasks(data || []); // Ensure userTasks is always an array
+      setUserTasks(data || []);
     };
     getTask();
-  }, []);
+  }, [selectedTaskId, user?._id, openTaskModal]);
 
   const todoTasks = userTasks.filter((task) => task.status === "todo");
   const inProgressTasks = userTasks.filter(
@@ -43,9 +43,7 @@ const Board = ({ setOpenTaskModal, setTaskStatus }) => {
           To do
           <ListFilter />
         </div>
-        {todoTasks.map((task, index) => (
-          <TaskCard key={index} tasks={task} />
-        ))}
+        <TaskCard tasks={todoTasks} selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId}/>
         <button
           onClick={() => {
             setTaskStatus("todo");
@@ -61,9 +59,7 @@ const Board = ({ setOpenTaskModal, setTaskStatus }) => {
           In progress
           <ListFilter />
         </div>
-        {inProgressTasks.map((task, index) => (
-          <TaskCard key={index} tasks={task} />
-        ))}
+        <TaskCard tasks={inProgressTasks}  selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId}/>
         <button
           onClick={() => {
             setTaskStatus("inProgress");
@@ -79,9 +75,7 @@ const Board = ({ setOpenTaskModal, setTaskStatus }) => {
           Under review
           <ListFilter />
         </div>
-        {underReviewTasks.map((task, index) => (
-          <TaskCard key={index} tasks={task} />
-        ))}
+        <TaskCard tasks={underReviewTasks}  selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId}/>
         <button
           onClick={() => {
             setTaskStatus("underReview");
@@ -97,9 +91,7 @@ const Board = ({ setOpenTaskModal, setTaskStatus }) => {
           Finished
           <ListFilter />
         </div>
-        {finishedTasks.map((task, index) => (
-          <TaskCard key={index} tasks={task} />
-        ))}
+        <TaskCard tasks={finishedTasks}  selectedTaskId={selectedTaskId} setSelectedTaskId={setSelectedTaskId}/>
         <button
           onClick={() => {
             setTaskStatus("finished");

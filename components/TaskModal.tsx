@@ -15,26 +15,11 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const statusData = [
-  {
-    title: "Not selected",
-    value: "notSelected",
-  },
-  {
-    title: "To Do",
-    value: "todo",
-  },
-  {
-    title: "In progress",
-    value: "inProgress",
-  },
-  {
-    title: "Under review",
-    value: "underReview",
-  },
-  {
-    title: "Finished",
-    value: "finished",
-  },
+  { title: "Not selected", value: "notSelected" },
+  { title: "To Do", value: "todo" },
+  { title: "In progress", value: "inProgress" },
+  { title: "Under review", value: "underReview" },
+  { title: "Finished", value: "finished" },
 ];
 
 interface TaskModalProps {
@@ -43,13 +28,17 @@ interface TaskModalProps {
   setTaskStatus?: (status: string) => void;
   taskStatus?: string;
   taskId?: string;
+  mode: "add" | "edit";
+  setSelectedTaskId?: any
 }
 
 const TaskModal: React.FC<TaskModalProps> = ({
   setOpenTaskModal,
   openTaskModal,
+  setSelectedTaskId,
   setTaskStatus,
   taskStatus,
+  mode,
   taskId,
 }) => {
   const [taskTitle, setTaskTitle] = useState("");
@@ -58,43 +47,97 @@ const TaskModal: React.FC<TaskModalProps> = ({
   const [taskDeadline, setTaskDeadline] = useState("");
   const { user } = useAuth();
 
+  console.log("mode", taskId);
+
   const HandleSaveTask = async () => {
     try {
-      const res = await axios.post("/api/tasks/createTask", {
-        title: taskTitle,
-        description: taskDescription,
-        priority: taskPriority,
-        deadline: taskDeadline,
-        status: taskStatus,
-        createdBy: user?._id,
+      const endpoint =
+        mode === "add"
+          ? "/api/tasks/createTask"
+          : `/api/tasks/updateTask/${taskId}`;
+      const method = mode === "add" ? "POST" : "PUT";
+      const res = await axios({
+        method,
+        url: endpoint,
+        data: {
+          title: taskTitle,
+          description: taskDescription,
+          priority: taskPriority,
+          deadline: taskDeadline,
+          status: taskStatus,
+          createdBy: user?._id,
+        },
       });
       console.log(res);
+      setSelectedTaskId(null)
       return res;
     } catch (error) {
       console.error("Error saving task:", error);
     }
   };
 
+  const deleteTask = () => {
+    axios
+      .post("/api/tasks/deleteTask", {
+        taskId,
+      })
+      .then((res) => {
+        toast.success('Task deleted Succesfully')
+        setSelectedTaskId(null)
+        setOpenTaskModal(false)
+      });
+  };
+
   const HandleCloseAndSave = async () => {
     if (!taskTitle || !taskDescription) {
       setOpenTaskModal(false);
-      return toast.error("Task Not Saved Title & Description are Mandatory Fields");
-      
+      return toast.error(
+        "Task Not Saved Title & Description are Mandatory Fields"
+      );
     }
     await HandleSaveTask();
     setOpenTaskModal(false);
-    toast.success("Task Saved Succesfully");
-    
+    setTaskTitle('')
+    setTaskDescription('')
+    setTaskPriority('')
+    setTaskDeadline('')
+    setTaskStatus('')
+    toast.success("Task Saved Successfully");
   };
 
-  useEffect(() => {});
+  const HandleClose = () => {
+    setOpenTaskModal(false);
+  };
+
+  useEffect(() => {
+    // Fetch and set task details if in edit mode
+    if (mode === "edit" && taskId) {
+      axios
+        .post("/api/tasks/getSingleTask", {
+          taskId,
+        })
+        .then((res) => {
+          console.log("res", res);
+          const { data } = res;
+
+          setTaskTitle(data.task.title);
+          setTaskDescription(data.task.description);
+          setTaskPriority(data.task.priority);
+          setTaskDeadline(data.task.deadline);
+          // setTaskStatus(data.status);
+        });
+    }
+  }, [mode, taskId]);
 
   return (
     <div className="h-screen bg-white px-6 py-4 shadow-lg">
       <div>
         <div className="flex justify-between text-[#797979]">
           <div className="flex gap-4">
-            <X className="cursor-pointer" onClick={HandleCloseAndSave} />
+            <X
+              className="cursor-pointer"
+              onClick={mode === "add" ? HandleCloseAndSave : HandleClose}
+            />
             <MoveDiagonal2 className="cursor-pointer" />
           </div>
 
@@ -105,6 +148,11 @@ const TaskModal: React.FC<TaskModalProps> = ({
             <div className="flex bg-[#F4F4F4] p-2 rounded-[4px] gap-[14px] cursor-pointer">
               Favorite <Star />
             </div>
+            {mode === "edit" && (
+              <div onClick={deleteTask} className="flex bg-red-400 text-white p-2 rounded-[4px] gap-[14px] cursor-pointer">
+                Delete
+              </div>
+            )}
           </div>
         </div>
 
@@ -136,7 +184,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
                 <div>
                   <select
                     name="status"
-                    onChange={(e) => setTaskStatus(e.target.value)}
+                    onChange={(e) => setTaskStatus?.(e.target.value)}
                     className="cursor-pointer"
                     value={taskStatus}
                   >

@@ -53,6 +53,7 @@ const Dashboard = () => {
         <Board
           setOpenTaskModal={setOpenTaskModal}
           setTaskStatus={setTaskStatus}
+          openTaskModal={openTaskModal}
         />
       </div>
 
@@ -67,6 +68,7 @@ const Dashboard = () => {
           openTaskModal={openTaskModal}
           setTaskStatus={setTaskStatus}
           taskStatus={taskStatus}
+          mode='add'
         />
       </div>
     </div>

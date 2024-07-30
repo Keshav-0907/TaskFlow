@@ -16,7 +16,6 @@ export async function POST(req: NextRequest) {
     await connectToDb();
 
     const task = await TaskModel.findById(taskId);
-    console.log(task)
 
     if (!task) {
       return NextResponse.json({
@@ -25,8 +24,10 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    await TaskModel.findByIdAndDelete(taskId);
+
     return NextResponse.json({
-      task,
+      message: "Task deleted successfully",
       status: 200,
     });
   } catch (error) {
