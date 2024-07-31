@@ -120,10 +120,10 @@ const Board: React.FC<BoardProps> = ({
                 setTaskStatus={setTaskStatus}
                 taskStatus={taskStatus}
                 task={task as any}
-                onClick={() => setSelectedTaskId(task._id)}
-                selectedTaskId={selectedTaskId as any}
+                // onClick={() => setSelectedTaskId(task._id)}
+                // selectedTaskId={selectedTaskId as any}
                 index={undefined as any}
-                setSelectedTaskId={setSelectedTaskId as any}
+                // setSelectedTaskId={setSelectedTaskId as any}
               />
             ))
           ) : (
