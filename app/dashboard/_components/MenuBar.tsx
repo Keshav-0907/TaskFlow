@@ -1,13 +1,21 @@
 import React from "react";
-import { Search, Calendar, Sparkles, Filter, Share2, PlusCircle } from "lucide-react";
+import {
+  Search,
+  Calendar,
+  Sparkles,
+  Filter,
+  Share2,
+  PlusCircle,
+} from "lucide-react";
 
 interface MenuOption {
   title: string;
-  icon: React.ReactNode; 
+  icon: React.ReactNode;
 }
 
 interface MenuBarProps {
   setOpenTaskModal: (open: boolean) => void;
+  setTaskStatus: any
 }
 
 const MenuBarOpts: MenuOption[] = [
@@ -29,7 +37,10 @@ const MenuBarOpts: MenuOption[] = [
   },
 ];
 
-const MenuBar: React.FC<MenuBarProps> = ({ setOpenTaskModal }) => {
+const MenuBar: React.FC<MenuBarProps> = ({
+  setOpenTaskModal,
+  setTaskStatus,
+}) => {
   return (
     <div className="flex justify-between items-center">
       <div className="bg-[#FFF] border-[1px] border-[#E9E9E9] flex w-fit p-2 items-center rounded-lg">
@@ -40,7 +51,10 @@ const MenuBar: React.FC<MenuBarProps> = ({ setOpenTaskModal }) => {
       <div className="flex gap-4">
         <div className="flex items-center text-[#797979] gap-4">
           {MenuBarOpts.map((opt, index) => (
-            <div key={index} className="flex gap-[14px] items-center cursor-pointer">
+            <div
+              key={index}
+              className="flex gap-[14px] items-center cursor-pointer"
+            >
               <span>{opt.title}</span>
               {opt.icon}
             </div>
@@ -48,7 +62,10 @@ const MenuBar: React.FC<MenuBarProps> = ({ setOpenTaskModal }) => {
         </div>
 
         <button
-          onClick={() => setOpenTaskModal(true)}
+          onClick={() => {
+            setTaskStatus("");
+            setOpenTaskModal(true);
+          }}
           className="bg-gradient-to-b flex p-2 text-white gap-2 rounded-lg justify-center items-center text-xl from-[#4C38C2] to-[#2F2188] border-[1px] border-[#4B36CC] w-full"
         >
           <span>Create new</span>

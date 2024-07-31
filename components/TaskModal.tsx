@@ -57,6 +57,11 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
   const { user } = useAuth();
 
+  console.log({
+    taskStatus: taskStatus,
+    taskStatuss: taskStatuss
+  })
+
   const HandleSaveTask = () => {
     if (mode === "edit" && initialTask) {
       const hasChanges =
@@ -68,7 +73,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
       if (!hasChanges) {
         console.log("No Changes");
-        
       }
     }
 
@@ -79,7 +83,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
             description: taskDescription,
             priority: taskPriority,
             deadline: taskDeadline,
-            status: taskStatus,
+            status: taskStatuss,
             createdBy: user?._id,
           })
         : axios
@@ -97,7 +101,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
     } catch (error) {
       console.error("Error saving task");
     }
-    setOpenTaskModal(false)
+    setOpenTaskModal(false);
   };
 
   const deleteTask = () => {
@@ -211,7 +215,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
                     name="status"
                     onChange={(e) => setTaskStatuss(e.target.value)}
                     className="cursor-pointer"
-                    value={taskStatuss}
+                    value={taskStatus || taskStatuss}
                   >
                     {statusData.map((item, index) => (
                       <option key={index} value={item.value}>

@@ -37,8 +37,6 @@ const TaskCard = ({ task, index, taskStatus, setTaskStatus }: TaskCardProps) => 
     }
   }, [task?._id, selectedTaskId, setOpenTaskModal]);
 
-  console.log(selectedTaskId, openTaskModal)
-
   const TaskPriority = () => {
     const getPriorityClass = (priority: string) => {
       switch (priority) {

@@ -54,7 +54,7 @@ const Dashboard = () => {
       <div className="py-6 pl-[300px] pr-4 flex overflow-y-auto flex-col gap-4 h-screen w-full bg-[#F7F7F7]">
         <Greetings greetingMessage={greetingMessage} />
         <Features />
-        <MenuBar setOpenTaskModal={setOpenTaskModal} />
+        <MenuBar setOpenTaskModal={setOpenTaskModal} setTaskStatus={setTaskStatus} />
         <Board
           setOpenTaskModal={setOpenTaskModal}
           setTaskStatus={setTaskStatus}
@@ -72,7 +72,7 @@ const Dashboard = () => {
         <TaskModal
           setOpenTaskModal={setOpenTaskModal}
           openTaskModal={openTaskModal}
-          setTaskStatus={setTaskStatus}
+          setTaskStatus={''}
           taskStatus={taskStatus}
           mode="add"
         />
