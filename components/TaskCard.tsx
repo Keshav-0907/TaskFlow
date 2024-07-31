@@ -39,21 +39,20 @@ const TaskCard = ({
       isDragging: monitor.isDragging(),
     }),
   });
-  useEffect(() => {
-    if (task?._id) {
-      if (selectedTaskId === task._id && !openTaskModal) {
-        console.log('selectedTaskId', selectedTaskId)
-        setOpenTaskModal(true);
-      } else if (selectedTaskId !== task._id && openTaskModal) {
-        setOpenTaskModal(false);
-      }
-    }
-  }, [selectedTaskId, openTaskModal, task?._id]);
 
+
+  useEffect(() => {
+    if (task?._id && selectedTaskId === task._id) {
+      setOpenTaskModal(true);
+    } else {
+      setOpenTaskModal(false);
+    }
+  }, [selectedTaskId, task?._id]);
   console.log('selectedTaskId' ,selectedTaskId)
   
 
   console.log('OTM', openTaskModal)
+
   const TaskPriority = () => {
     const getPriorityClass = (priority: string) => {
       switch (priority) {
