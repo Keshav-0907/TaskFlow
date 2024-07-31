@@ -60,7 +60,7 @@ const Dashboard = () => {
         <Board
           setOpenTaskModal={setOpenTaskModal}
           setTaskStatus={setTaskStatus}
-          taskStatu={taskStatus}
+          taskStatus={taskStatus}
           openTaskModal={openTaskModal}
         />
       </div>
