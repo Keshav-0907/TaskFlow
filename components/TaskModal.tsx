@@ -57,10 +57,10 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
   const { user } = useAuth();
 
-  console.log({
-    taskStatus: taskStatus,
-    taskStatuss: taskStatuss
-  })
+  // console.log({
+  //   taskStatus: taskStatus,
+  //   taskStatuss: taskStatuss,
+  // });
 
   const HandleSaveTask = () => {
     if (mode === "edit" && initialTask) {
@@ -78,14 +78,23 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
     try {
       mode === "add"
-        ? axios.post("/api/tasks/createTask", {
-            title: taskTitle,
-            description: taskDescription,
-            priority: taskPriority,
-            deadline: taskDeadline,
-            status: taskStatuss,
-            createdBy: user?._id,
-          })
+        ? axios
+            .post("/api/tasks/createTask", {
+              title: taskTitle,
+              description: taskDescription,
+              priority: taskPriority,
+              deadline: taskDeadline,
+              status: taskStatus,
+              createdBy: user?._id,
+            })
+            .then((res) => {
+              if (res.status === 200) {
+                toast.success("Saved");
+              }
+              if (res.status === 400) {
+                toast.error("Please Enter the required fields");
+              }
+            })
         : axios
             .put("/api/tasks/updateTask", {
               title: taskTitle,
@@ -97,6 +106,9 @@ const TaskModal: React.FC<TaskModalProps> = ({
             })
             .then((res) => {
               setSelectedTaskId(null);
+              // if (res.status === 200) {
+              //   toast.success("Updated");
+              // }
             });
     } catch (error) {
       console.error("Error saving task");
@@ -124,11 +136,13 @@ const TaskModal: React.FC<TaskModalProps> = ({
     }
 
     setIsClosing(true);
-    await HandleSaveTask(); // Wait for the task to be saved
+    await HandleSaveTask();
     setTaskTitle("");
     setTaskDescription("");
     setTaskPriority("");
     setTaskDeadline("");
+    // setTaskStatus("")
+    setTaskStatuss("");
     setOpenTaskModal(false);
   };
 
@@ -215,7 +229,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
                     name="status"
                     onChange={(e) => setTaskStatuss(e.target.value)}
                     className="cursor-pointer"
-                    value={taskStatus || taskStatuss}
+                    value={taskStatuss}
                   >
                     {statusData.map((item, index) => (
                       <option key={index} value={item.value}>
@@ -224,6 +238,35 @@ const TaskModal: React.FC<TaskModalProps> = ({
                     ))}
                   </select>
                 </div>
+                {/* <div>
+                  {taskStatus ? (
+                    <select
+                      name="status"
+                      onChange={(e) => setTaskStatus(e.target.value)}
+                      className="cursor-pointer"
+                      value={taskStatus}
+                    >
+                      {statusData.map((item, index) => (
+                        <option key={index} value={item.value}>
+                          {item.title}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <select
+                      name="status"
+                      onChange={(e) => setTaskStatuss(e.target.value)}
+                      className="cursor-pointer"
+                      value={taskStatuss}
+                    >
+                      {statusData.map((item, index) => (
+                        <option key={index} value={item.value}>
+                          {item.title}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div> */}
                 <div>
                   <select
                     name="priority"

@@ -21,7 +21,7 @@ interface BoardProps {
   setOpenTaskModal: (open: boolean) => void;
   setTaskStatus: (status: string) => void;
   openTaskModal: boolean;
-  taskStatus:any
+  taskStatus: string;
 }
 
 interface ColumnProps {
@@ -44,7 +44,11 @@ const Board: React.FC<BoardProps> = ({
   const { user } = useAuth();
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
+  console.log("Board component rendered", { openTaskModal, userTasks });
+
   useEffect(() => {
+    console.log("useEffect triggered", { selectedTaskId, user, openTaskModal });
+    
     const getTask = async () => {
       if (!user?._id) return;
       try {
@@ -56,12 +60,13 @@ const Board: React.FC<BoardProps> = ({
           body: JSON.stringify({ userID: user._id }),
         });
         const data = await res.json();
+        console.log("Fetched tasks:", data);
         setUserTasks(data || []);
-        
       } catch (error) {
         console.error("Failed to fetch tasks:", error);
       }
     };
+
     getTask();
   }, [selectedTaskId, user?._id, openTaskModal]);
 
@@ -119,11 +124,8 @@ const Board: React.FC<BoardProps> = ({
                 key={task._id}
                 setTaskStatus={setTaskStatus}
                 taskStatus={taskStatus}
-                task={task as any}
-                // onClick={() => setSelectedTaskId(task._id)}
-                // selectedTaskId={selectedTaskId as any}
-                index={undefined as any}
-                // setSelectedTaskId={setSelectedTaskId as any}
+                task={task}
+                index={undefined}
               />
             ))
           ) : (

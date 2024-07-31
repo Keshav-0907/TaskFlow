@@ -40,6 +40,8 @@ const Dashboard = () => {
   };
   const greetingMessage = getGreeting();
 
+  console.log('first', openTaskModal)
+
   return (
     <div className="flex w-screen">
       <div className="fixed">

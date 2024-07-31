@@ -5,7 +5,7 @@ import TaskModel from "@/models/TaskModel";
 export async function POST(req: NextRequest) {
   const { title, priority, deadline, description, status, createdBy } = await req.json();
 
-  if(!title || !status) {
+  if(!title || !status || !description) {
     return NextResponse.json({
       msg: "Please fill in all required fields",
       status: 400,
