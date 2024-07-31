@@ -44,13 +44,34 @@ const TaskModal: React.FC<TaskModalProps> = ({
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [taskPriority, setTaskPriority] = useState("");
-  const [taskStatuss, setTaskStatuss] = useState("")
+  const [taskStatuss, setTaskStatuss] = useState("");
   const [taskDeadline, setTaskDeadline] = useState("");
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [isClosing, setIsClosing] = useState(false);
+  const [initialTask, setInitialTask] = useState<{
+    title: string;
+    description: string;
+    priority: string;
+    status: string;
+    deadline: string;
+  } | null>(null);
 
   const { user } = useAuth();
 
   const HandleSaveTask = () => {
+    if (mode === "edit" && initialTask) {
+      const hasChanges =
+        taskTitle !== initialTask.title ||
+        taskDescription !== initialTask.description ||
+        taskPriority !== initialTask.priority ||
+        taskStatuss !== initialTask.status ||
+        taskDeadline !== initialTask.deadline;
+
+      if (!hasChanges) {
+        console.log("No Changes");
+        
+      }
+    }
+
     try {
       mode === "add"
         ? axios.post("/api/tasks/createTask", {
@@ -67,7 +88,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
               description: taskDescription,
               priority: taskPriority,
               deadline: taskDeadline,
-              status: taskStatus,
+              status: taskStatuss,
               taskId,
             })
             .then((res) => {
@@ -76,6 +97,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
     } catch (error) {
       console.error("Error saving task");
     }
+    setOpenTaskModal(false)
   };
 
   const deleteTask = () => {
@@ -90,19 +112,20 @@ const TaskModal: React.FC<TaskModalProps> = ({
       });
   };
 
-  console.log("status", taskStatus);
   const HandleCloseAndSave = async () => {
     if (!taskTitle || !taskDescription) {
+      setIsClosing(true);
       setOpenTaskModal(false);
       return;
     }
-    await HandleSaveTask();
-    setOpenTaskModal(false);
+
+    setIsClosing(true);
+    await HandleSaveTask(); // Wait for the task to be saved
     setTaskTitle("");
     setTaskDescription("");
     setTaskPriority("");
     setTaskDeadline("");
-    toast.success("Task Saved Successfully");
+    setOpenTaskModal(false);
   };
 
   const today = new Date().toISOString().split("T")[0];
@@ -115,15 +138,21 @@ const TaskModal: React.FC<TaskModalProps> = ({
         })
         .then((res) => {
           const { data } = res;
-console.log(data)
           setTaskTitle(data.task.title);
           setTaskDescription(data.task.description);
           setTaskPriority(data.task.priority);
           setTaskDeadline(data.task.deadline);
           setTaskStatuss(data.task.status);
+          setInitialTask({
+            title: data.task.title,
+            description: data.task.description,
+            priority: data.task.priority,
+            status: data.task.status,
+            deadline: data.task.deadline,
+          });
         });
     }
-  }, [mode, taskId]);
+  }, [mode, taskId, openTaskModal]);
 
   return (
     <div className="h-screen bg-white px-6 py-4 shadow-lg">

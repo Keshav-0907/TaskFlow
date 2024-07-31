@@ -42,7 +42,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsLoading(true);
         try {
           const response = await axios.post("/api/user/getUser", { token });
-          console.log("User data:", response.data);
           setUser(response.data.userDetails);
         } catch (error) {
           console.error("Failed to fetch user:", error);

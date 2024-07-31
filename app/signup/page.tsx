@@ -47,7 +47,6 @@ const Signup: React.FC = () => {
         email,
         password,
       });
-      console.log(res);
       if (res.data.status === 200) {
         toast.success("SignUp Successful");
         setTimeout(() => {

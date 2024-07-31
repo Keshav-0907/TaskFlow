@@ -3,12 +3,12 @@ import { connectToDb } from "@/utils/connectToDb";
 import TaskModel from "@/models/TaskModel";
 
 export async function PUT(req: NextRequest) {
-  const { taskId, title, priority, deadline, description, updatedBy } = await req.json();
+  const { taskId, title, priority, deadline, description, status } = await req.json();
 
   await connectToDb();
 
   const task = await TaskModel.findById(taskId);
-  if (!task) {
+  if (!task) { 
     return NextResponse.json({
       msg: "Task not found",
       status: 404,
@@ -19,7 +19,7 @@ export async function PUT(req: NextRequest) {
   task.priority = priority;
   task.deadline = deadline;
   task.description = description;
-  task.updatedBy = updatedBy;
+  task.status = status
 
   await task.save();
 
