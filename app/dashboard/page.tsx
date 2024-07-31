@@ -16,6 +16,8 @@ const Dashboard = () => {
   const [taskStatus, setTaskStatus] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  console.log('taskStatus form DB', taskStatus)
+
   const router = useRouter();
 
   useEffect(() => {
@@ -58,6 +60,7 @@ const Dashboard = () => {
         <Board
           setOpenTaskModal={setOpenTaskModal}
           setTaskStatus={setTaskStatus}
+          taskStatu={taskStatus}
           openTaskModal={openTaskModal}
         />
       </div>

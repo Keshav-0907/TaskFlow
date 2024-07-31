@@ -21,6 +21,7 @@ interface BoardProps {
   setOpenTaskModal: (open: boolean) => void;
   setTaskStatus: (status: string) => void;
   openTaskModal: boolean;
+  taskStatus:any
 }
 
 interface ColumnProps {
@@ -36,6 +37,7 @@ interface DropItem {
 const Board: React.FC<BoardProps> = ({
   setOpenTaskModal,
   setTaskStatus,
+  taskStatus,
   openTaskModal,
 }) => {
   const [userTasks, setUserTasks] = useState<Task[]>([]);
@@ -114,11 +116,13 @@ const Board: React.FC<BoardProps> = ({
             tasks.map((task) => (
               <TaskCard
                 key={task._id}
+                setTaskStatus={setTaskStatus}
+                taskStatus={taskStatus}
                 task={task as any}
                 onClick={() => setSelectedTaskId(task._id)}
                 selectedTaskId={selectedTaskId as any}
                 index={undefined as any}
-                setSelectedTaskId={undefined as any}
+                setSelectedTaskId={setSelectedTaskId as any}
               />
             ))
           ) : (
@@ -142,7 +146,7 @@ const Board: React.FC<BoardProps> = ({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="grid grid-cols-4 bg-white p-4 h-full gap-4">
+      <div className="grid grid-cols-4 bg-white p-4 h-fit gap-4">
         <Column title="To do" tasks={todoTasks} status="todo" />
         <Column
           title="In progress"

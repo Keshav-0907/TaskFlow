@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDrag } from "react-dnd";
 import { Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -18,14 +18,18 @@ interface TaskCardProps {
   onClick: (taskId: string) => void;
   selectedTaskId: string;
   setSelectedTaskId: (taskId: string) => void;
+  setTaskStatus: React.Dispatch<React.SetStateAction<any>>;
+  taskStatus: any;
 }
 
 const TaskCard = ({
   task,
   index,
+  taskStatus,
   onClick,
   selectedTaskId,
   setSelectedTaskId,
+  setTaskStatus,
 }: TaskCardProps) => {
   const [openTaskModal, setOpenTaskModal] = useState(false);
   const [{ isDragging }, drag] = useDrag({
@@ -36,13 +40,16 @@ const TaskCard = ({
     }),
   });
 
-  const handleTaskClick = (taskId: string) => {
-    setSelectedTaskId(taskId);
-    setOpenTaskModal(true);
-  };
+  useEffect(() => {
+    if (selectedTaskId === task._id) {
+      setOpenTaskModal(true);
+    } else {
+      setOpenTaskModal(false);
+    }
+  }, [selectedTaskId]);
 
   const TaskPriority = () => {
-    const getPriorityClass = (priority: any) => {
+    const getPriorityClass = (priority: string) => {
       switch (priority) {
         case 'Urgent':
           return 'bg-red-500';
@@ -57,7 +64,7 @@ const TaskCard = ({
 
     return (
       <div
-        className={`py-[6px] px-2 rounded-lg w-fit text-white ${getPriorityClass(task.priority)}`}
+        className={`py-1 px-2 rounded-lg text-white w-fit ${getPriorityClass(task.priority)}`}
       >
         {task.priority}
       </div>
@@ -71,14 +78,13 @@ const TaskCard = ({
         style={{ opacity: isDragging ? 0.5 : 1 }}
         onClick={() => {
           onClick(task._id);
-          handleTaskClick(task._id);
         }}
-        className="py-[14px] cursor-pointer hover:bg-slate-100 px-[13px] bg-[#F9F9F9] border-[1px] border-[#DEDEDE] flex flex-col gap-4 rounded-lg"
+        className="py-3 cursor-pointer hover:bg-slate-100 px-3 bg-[#F9F9F9] border border-[#DEDEDE] flex flex-col gap-4 rounded-lg"
       >
-        <div className="flex flex-col gap-[13px]">
+        <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
-            <div className="text-[#606060] font-medium">{task?.title}</div>
-            <div className="text-[#797979] text-sm">{task?.description}</div>
+            <div className="text-[#606060] font-medium">{task.title}</div>
+            <div className="text-[#797979] text-sm">{task.description}</div>
           </div>
           {task.priority && <TaskPriority />}
           {task.deadline && (
@@ -93,7 +99,7 @@ const TaskCard = ({
         </div>
       </div>
       <div
-        className={`fixed top-0 right-0 h-screen bg-white transform transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-screen bg-white transform transition-transform duration-500 ${
           openTaskModal ? "translate-x-0" : "translate-x-full"
         }`}
         style={{ width: "670px" }}
@@ -105,6 +111,8 @@ const TaskCard = ({
             openTaskModal={openTaskModal}
             taskId={selectedTaskId}
             setSelectedTaskId={setSelectedTaskId}
+            setTaskStatus={setTaskStatus}
+            taskStatus={taskStatus}
           />
         )}
       </div>

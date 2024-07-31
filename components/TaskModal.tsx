@@ -25,7 +25,7 @@ const statusData = [
 interface TaskModalProps {
   setOpenTaskModal: (open: boolean) => void;
   openTaskModal: boolean;
-  setTaskStatus?: (status: string) => void;
+  setTaskStatus?: any;
   taskStatus?: string;
   taskId?: string;
   mode: "add" | "edit";
@@ -44,31 +44,30 @@ const TaskModal: React.FC<TaskModalProps> = ({
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [taskPriority, setTaskPriority] = useState("");
+  const [taskStatuss, setTaskStatuss] = useState("")
   const [taskDeadline, setTaskDeadline] = useState("");
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   const { user } = useAuth();
 
-
   const HandleSaveTask = () => {
     try {
       mode === "add"
-        ? axios
-            .post("/api/tasks/createTask", {
+        ? axios.post("/api/tasks/createTask", {
+            title: taskTitle,
+            description: taskDescription,
+            priority: taskPriority,
+            deadline: taskDeadline,
+            status: taskStatus,
+            createdBy: user?._id,
+          })
+        : axios
+            .put("/api/tasks/updateTask", {
               title: taskTitle,
               description: taskDescription,
               priority: taskPriority,
               deadline: taskDeadline,
               status: taskStatus,
-              createdBy: user?._id,
-            })
-
-        : axios
-            .put("/api/tsks/updateTask", {
-              title: taskTitle,
-              description: taskDescription,
-              priority: taskPriority,
-              deadline: taskDeadline,
               taskId,
             })
             .then((res) => {
@@ -91,6 +90,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
       });
   };
 
+  console.log("status", taskStatus);
   const HandleCloseAndSave = async () => {
     if (!taskTitle || !taskDescription) {
       setOpenTaskModal(false);
@@ -107,10 +107,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
   const today = new Date().toISOString().split("T")[0];
 
-  const HandleClose = () => {
-    setOpenTaskModal(false);
-  };
-
   useEffect(() => {
     if (mode === "edit" && taskId) {
       axios
@@ -119,11 +115,12 @@ const TaskModal: React.FC<TaskModalProps> = ({
         })
         .then((res) => {
           const { data } = res;
-
+console.log(data)
           setTaskTitle(data.task.title);
           setTaskDescription(data.task.description);
           setTaskPriority(data.task.priority);
           setTaskDeadline(data.task.deadline);
+          setTaskStatuss(data.task.status);
         });
     }
   }, [mode, taskId]);
@@ -183,9 +180,9 @@ const TaskModal: React.FC<TaskModalProps> = ({
                 <div>
                   <select
                     name="status"
-                    onChange={(e) => setTaskStatus?.(e.target.value)}
+                    onChange={(e) => setTaskStatuss(e.target.value)}
                     className="cursor-pointer"
-                    value={taskStatus}
+                    value={taskStatuss}
                   >
                     {statusData.map((item, index) => (
                       <option key={index} value={item.value}>
@@ -212,7 +209,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
                     type="date"
                     onChange={(e) => setTaskDeadline(e.target.value)}
                     value={taskDeadline}
-                    min={today} 
+                    min={today}
                     className="cursor-pointer"
                   />
                 </div>
