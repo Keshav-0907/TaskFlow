@@ -57,6 +57,7 @@ const Board: React.FC<BoardProps> = ({
         });
         const data = await res.json();
         setUserTasks(data || []);
+        
       } catch (error) {
         console.error("Failed to fetch tasks:", error);
       }

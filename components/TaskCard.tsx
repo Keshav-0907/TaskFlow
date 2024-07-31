@@ -1,9 +1,9 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { useDrag } from "react-dnd";
-import { Clock } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import TaskModal from "./TaskModal";
+import React, { useEffect } from 'react';
+import { useDrag } from 'react-dnd';
+import { Clock } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import TaskModal from './TaskModal';
+import { useTaskContext } from '@/context/TaskContext';
 
 interface TaskCardProps {
   task: {
@@ -15,43 +15,29 @@ interface TaskCardProps {
     createdAt: string;
   };
   index: number;
-  onClick: (taskId: string) => void;
-  selectedTaskId: string;
-  setSelectedTaskId: (taskId: string) => void;
   setTaskStatus: React.Dispatch<React.SetStateAction<any>>;
   taskStatus: any;
 }
 
-const TaskCard = ({
-  task,
-  index,
-  taskStatus,
-  onClick,
-  selectedTaskId,
-  setSelectedTaskId,
-  setTaskStatus,
-}: TaskCardProps) => {
-  const [openTaskModal, setOpenTaskModal] = useState(false);
+const TaskCard = ({ task, index, taskStatus, setTaskStatus }: TaskCardProps) => {
+  const { selectedTaskId, setSelectedTaskId, openTaskModal, setOpenTaskModal } = useTaskContext();
   const [{ isDragging }, drag] = useDrag({
-    type: "TASK",
+    type: 'TASK',
     item: { id: task._id, index },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
 
-
   useEffect(() => {
-    if (task?._id && selectedTaskId === task._id) {
+    if (selectedTaskId) {
       setOpenTaskModal(true);
     } else {
       setOpenTaskModal(false);
     }
-  }, [selectedTaskId, task?._id]);
-  console.log('selectedTaskId' ,selectedTaskId)
-  
+  }, [task?._id, selectedTaskId, setOpenTaskModal]);
 
-  console.log('OTM', openTaskModal)
+  console.log(selectedTaskId, openTaskModal)
 
   const TaskPriority = () => {
     const getPriorityClass = (priority: string) => {
@@ -68,9 +54,7 @@ const TaskCard = ({
     };
 
     return (
-      <div
-        className={`py-1 px-2 rounded-lg text-white w-fit ${getPriorityClass(task.priority)}`}
-      >
+      <div className={`py-1 px-2 rounded-lg text-white w-fit ${getPriorityClass(task.priority)}`}>
         {task.priority}
       </div>
     );
@@ -81,9 +65,7 @@ const TaskCard = ({
       <div
         ref={drag as any}
         style={{ opacity: isDragging ? 0.5 : 1 }}
-        onClick={() => {
-          onClick(task._id);
-        }}
+        onClick={() => setSelectedTaskId(task._id)}
         className="py-3 cursor-pointer hover:bg-slate-100 px-3 bg-[#F9F9F9] border border-[#DEDEDE] flex flex-col gap-4 rounded-lg"
       >
         <div className="flex flex-col gap-3">
@@ -98,16 +80,15 @@ const TaskCard = ({
             </div>
           )}
         </div>
-
         <div className="text-sm font-medium text-[#797979]">
           {formatDistanceToNow(new Date(task.createdAt))} ago
         </div>
       </div>
       <div
         className={`fixed top-0 right-0 h-screen bg-white transform transition-transform duration-500 ${
-          openTaskModal ? "translate-x-0" : "translate-x-full"
+          openTaskModal ? 'translate-x-0' : 'translate-x-full'
         }`}
-        style={{ width: "670px" }}
+        style={{ width: '670px' }}
       >
         {openTaskModal && selectedTaskId && (
           <TaskModal
